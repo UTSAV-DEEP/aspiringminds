@@ -1,6 +1,7 @@
 <html>
 <head>
-	<style>
+<style> 
+/* positioning the div elements to desired place */
 	div.input
 	{
 		position:absolute;
@@ -11,177 +12,247 @@
 	{
 		position:absolute;
 		left:700px;
-		top:400px;
+		top:430px;
 	}
 	div.add
 	{
 		position:absolute;
-		left:800px;
-		top:360px;
+		left:600px;
+		top:280px;
 	}
 	div.create
 	{
 		position:absolute;
 		left:600px;
-		top:300px;
+		top:320px;
 	}
-	</style>
-	<script type='text/javascript'>
-        function addFields()
+</style>
+<script type='text/javascript'>
+	function addFields()
+    {
+		// Number of inputs to create
+        var number = document.getElementById("args").value;
+        // Container <div> where dynamic content will be placed
+        var container = document.getElementById("container");
+        var tbl=document.createElement('table');
+        var tbdy=document.createElement('tbody');
+        // Clear previous contents of the container
+        while (container.hasChildNodes()) 
         {
-            // Number of inputs to create
-            var number = document.getElementById("args").value;
-            // Container <div> where dynamic content will be placed
-            var container = document.getElementById("container");
-            var tbl=document.createElement('table');
-            var tbdy=document.createElement('tbody');
-            // Clear previous contents of the container
-            while (container.hasChildNodes()) 
-            {
-                container.removeChild(container.lastChild);
-            }
-            var tr=document.createElement('tr');
-            var td=document.createElement('td');
-            td.appendChild(document.createTextNode("Argument"));
-            tr.appendChild(td);
-            td=document.createElement('td');
-            td.appendChild(document.createTextNode("Variable name"));
-            tr.appendChild(td);
-            td=document.createElement('td');
-            td.appendChild(document.createTextNode("Data Type"));
-            tr.appendChild(td);
-            td=document.createElement('td');
-            td.appendChild(document.createTextNode("Dimensionality"));
-            tr.appendChild(td);
-            tbdy.appendChild(tr);        
-            for (i=0;i<number;i++)
-            {
-                tr=document.createElement('tr');
-                td=document.createElement('td');               
-                td.appendChild(document.createTextNode((i+1)+"."));
-                tr.appendChild(td);
-                var input = document.createElement("input");
-                input.type = "text";
-                input.name = "var_name" + i;
-                td=document.createElement('td');
-                td.appendChild(input);
-                tr.appendChild(td);
-                var select = document.createElement("select");
-                var option=document.createElement("option");
-                select.name = "data_type" + i;
-                option.value="int";
-                option.appendChild(document.createTextNode("integer"));
-                select.appendChild(option);
-                td=document.createElement('td');               
-                td.appendChild(select);
-                tr.appendChild(td);
-                var select = document.createElement("select");
-                select.name = "dim" + i;
-                for(var j=0;j<3;j++)
-                {
-					var option=document.createElement("option");
-					option.value=j;
-					option.appendChild(document.createTextNode(j));
-					select.appendChild(option);
-                }
-                td=document.createElement('td');               
-                td.appendChild(select);
-                tr.appendChild(td);
-                tbdy.appendChild(tr);
-            }
-            tbl.appendChild(tbdy);
-            container.appendChild(tbl);
+            container.removeChild(container.lastChild);
         }
         
-		function copyText() 
+        //Argument Properties:
+        var tr=document.createElement('tr');
+        var td=document.createElement('td');
+        td.appendChild(document.createTextNode("Arg. No."));
+        tr.appendChild(td);
+        td=document.createElement('td');
+        td.appendChild(document.createTextNode("Variable name"));
+        tr.appendChild(td);
+        td=document.createElement('td');
+        td.appendChild(document.createTextNode("Data Type"));
+        tr.appendChild(td);
+        td=document.createElement('td');
+        td.appendChild(document.createTextNode("Dimensionality"));
+        tr.appendChild(td);
+        tbdy.appendChild(tr); 
+        
+        //creating fields for defining specified number of arguments:
+        for (i=0;i<number;i++)
+        {
+            tr=document.createElement('tr');
+            td=document.createElement('td');               
+            td.appendChild(document.createTextNode((i+1)+"."));
+            tr.appendChild(td);
+            var input = document.createElement("input");
+            input.type = "text";
+            input.name = "var_name" + i;
+            input.id= "var_name" + i;
+            td=document.createElement('td');
+            td.appendChild(input);
+            tr.appendChild(td);
+            var select = document.createElement("select");
+            var option=document.createElement("option");
+            select.name = "data_type" + i;
+            select.id = "data_type" + i;
+            option.value="int";
+            option.appendChild(document.createTextNode("Integer"));
+            select.appendChild(option);
+            option=document.createElement("option");
+            option.value="char";
+            option.appendChild(document.createTextNode("Character"));
+            select.appendChild(option);
+            td=document.createElement('td');               
+            td.appendChild(select);
+            tr.appendChild(td);
+            select = document.createElement("select");
+            select.name = "dim" + i;
+            select.id = "dim" + i;
+            for(var j=0;j<3;j++)
+            {
+				var option=document.createElement("option");
+				option.value=j;
+				option.appendChild(document.createTextNode(j));
+				select.appendChild(option);
+            }
+            td=document.createElement('td');               
+            td.appendChild(select);
+            tr.appendChild(td);
+            tbdy.appendChild(tr);
+        }
+        tbl.appendChild(tbdy);
+        container.appendChild(tbl);
+    }
+    
+    /*
+    when the button with label "Add suggestion to coding area" is pressed,
+    then this function writes everything visible in div "create" to the textarea "txtar"
+    */
+    function copyText()
+    {
+		var div_op = document.getElementById("create").innerText;
+		if(div_op.substr(0,2)=="//")
 		{
-			var output = document.getElementById("create").innerText;
-			document.getElementById("txtar").value += output;
+			document.getElementById("txtar").value+= div_op;
+			return;
 		}
-	</script>
+		var lang = document.getElementById("lang").value;
+		var fname = document.getElementById("fname").value;
+		var rtype = document.getElementById("rtype").value;
+		var cname = document.getElementById("cname").value;
+		var args = document.getElementById("args").value;
+		var vname=[];
+		var dtype=[];
+		var dim =[];
+		vname.length=args;dtype.length=args; dim.length=3;
+		for ( var i=0;i<args;i++)
+		{
+			vname[i]=document.getElementById("var_name"+i).value;
+			dtype[i]=document.getElementById("data_type"+i).value;
+			dim[i]=document.getElementById("dim"+i).value;
+		}
+		var output=document.getElementById("txtar").value;
+		if(lang=='c')
+		{
+			output+=rtype+" "+fname+"(";
+			for(var i=0;i<args;i++)
+			{
+				if(dim[i]==0)
+					output+=dtype[i]+" "+vname[i];
+				else 
+					output+=document.getElementById("s"+i).value;
+				if(i<args-1)
+					output+=", ";
+			}
+			output+=")\n{\n\t\n}\n";
+		}
+		else if(lang=="java")
+		{
+			output+=cname+"\n{\n\t"+rtype+" "+fname+"(";
+			for(var i=0;i<args;i++)
+			{
+				if(dim[i]==0)
+					output+=dtype[i]+" "+vname[i];
+				else 
+					output+=document.getElementById("s"+i).value;
+				if(i<args-1)
+					output+=", ";
+			}
+			output+=")\n\t{\n\t\t\n\t}\n}\n";
+		}
+		document.getElementById("txtar").value=output;
+	}
+</script>
 </head>
 <body>
+	<!-- displaying the question, stored in problem.txt, inside the frame using problem.php -->
 	<div class="problem"><h2>PROBLEM</h2>
 		<iframe src="problem.php" width="100%" height="30%" ></iframe>
 	</div>
 	<div class="input" id="input">
-		<form id="solution">
-			<table>
-				<tr>
-					<td> Language: </td><td>
-					<select name="Language" class="lang">
-						<option value="c">C</option>
-						<option value="java">Java</option>
-					</select>
-					</td>
-					<br>
-				</tr>
-				<tr>
-					<td> Name of the function: </td>
-					<td><input type="text" name="func_name" class="func"></td><br>
-				</tr>
-				<tr>
-					<td> Return type of the function: </td>
-					<td>
-					<select name="return_type" class="ret">
-						<option value="int">integer</option>
-					</select>
-					</td>
-					<br>
-				</tr>
-				<tr>
-					<td> Name of the class (for java): </td>
-					<td><input type="text" name="class_name" class="class"></td><br>
-				</tr>
-				<tr>
-					<td>No. of input arguments: </td>
-					<td><input type="text" id="args" name="arguments">
-					<a href="#" id="filldetails" onclick="addFields()">Fill Details</a></td><br>
-				</tr>
-			</table>
-			<table>
-				<tr><td> <div id="container"/></td></tr>
-				<tr>
-					<td>
-					<div>
-						<input type="submit" name="submit" id="submit-button"></button>
-					</div>
-					</td>
-				</tr>
-			</table>
-		</form>
+	<!-- form to create content -->
+	<form id="solution">
+	<table>
+		<tr>
+			<td> Language: </td><td>
+				<select name="Language" class="lang" id="lang">
+					<option value="c">C</option>
+					<option value="java">Java</option>
+				</select>
+			</td>
+			<br>
+		</tr>
+		<tr>
+			<td> Name of the function: </td>
+			<td><input type="text" name="func_name" class="func" id="fname"></td><br>
+		</tr>
+		<tr>
+			<td> Return type of the function: </td>
+			<td>
+				<select name="return_type" class="ret" id="rtype">
+				<option value="int">integer</option>
+				</select>
+			</td><br>
+		</tr>
+		<tr>
+			<td> Name of the class (for java): </td>
+			<td><input type="text" name="class_name" class="class" id="cname"></td><br>
+		</tr>
+		<tr>
+		<td>No. of input arguments: </td>
+		<td><input type="text" id="args" name="arguments" value=0>
+			<a href="#" id="filldetails" onclick="addFields()">Fill Details</a></td><br>
+			<!-- when "Fill Details" is clicked the javascript function "addFields()" defined above,
+			creates fields fill definition of function arguments -->
+		</tr>
+	</table>
+	<table>
+		<tr>
+			<td> <div id="container"/></td>
+		</tr>
+		<tr>
+			<td><input type="submit" name="submit" id="submit-button"></button></td>
+		</tr>
+	</table>
+	</form>
 	</div>
 	<div class="create" id="create">
-		No Suggestions Available
+		//No Suggestions Available<br>
 	</div>
 	<div class="code">
-		<textarea rows="30" cols="70" class="txtar" id="txtar"> 
-		</textarea>
-		<button id="submit_code">Submit Code</button>
+	<!-- form to take the contents of textarea to external "check_sol.php" for checking the correctness of code -->
+		<form name="get_code" action="check_sol.php" method="post">
+			<textarea rows="30" cols="70" class="txtar" id="txtar" name="txtar">//coding area
+</textarea>
+			<input type="submit" value="Submit Code">
+		</form>
 	</div>
-	<script src="jquery-1.3.2.min.js">
-	</script>
+	<script src="jquery-1.3.2.min.js"></script>
+	<!-- ajax code to pass the data to backend.php and to display the suggestions
+	generated by backend.php in div "create" without reloading the whole page -->
 	<script>
-		$(document).ready(function()
+	$(document).ready(function()
+	{
+		$('#solution').submit(function(event) 
 		{
-			$('#solution').submit(function(event) 
+			event.preventDefault();
+			$.ajax(
 			{
-				event.preventDefault();
-				$.ajax(
-				{
-					type:'POST',
-					url:'backend.php',
-					data:  $(this).serialize(),
-					success: function(response)
-					{
-						$("#create").html(response);
-					}
-				});
+               type:'POST',
+               url:'backend.php',
+               data:  $(this).serialize(),
+               success: function(response)
+               {
+                   $("#create").html(response);
+               }
 			});
 		});
+	});
 	</script>
+	<!-- this button adds the suggested class or function to the editable textarea -->
 	<div class="add">
-		<button onclick="copyText();" id="btn">Add to coding area</button>
+		<button onclick="copyText();" id="btn">Add suggestion to coding area</button>
 	</div>
 </body>
 </html>
