@@ -1,0 +1,3 @@
+Ram has just learned to code and wants to know how to sort an array of N numbers. Help him.
+
+The function signature would be int sort_arr(int* arr, int n)
